@@ -16,25 +16,25 @@ struct MainTabView: View {
                     Image(systemName: "film")
                     Text("Movies")
                 }
-            
+
             SeriesView()
                 .tabItem {
                     Image(systemName: "tv")
                     Text("Series")
                 }
-            
+
             SearchView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Search")
                 }
-            
+
             SavedView()
                 .tabItem {
                     Image(systemName: "heart.fill")
                     Text("Saved")
                 }
-            
+
             SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape")
