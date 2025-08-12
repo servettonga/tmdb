@@ -1,6 +1,7 @@
 disabled_rules: # rule identifiers to exclude from running
   - nesting
   - function_parameter_count
+  - identifier_name
 opt_in_rules: # some rules are only opt-in
   - control_statement
   - empty_count
@@ -9,10 +10,10 @@ opt_in_rules: # some rules are only opt-in
   - comma
 included: # paths to include during linting. `--path` is ignored if present.
   - TMDB
-excluded: # paths to ignore during linting. Takes precedence over `included`.
-  # - Pods
   - TMDBTests
   - TMDBUITests
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  - Pods
   - TMDB/R.generated.swift
 
 # configurable rules can be customized from this configuration file
@@ -21,6 +22,10 @@ force_cast: warning # implicitly. Give warning only for force casting
 
 force_try:
   severity: warning # explicitly. Give warning only for force try
+
+line_length:
+  warning: 140
+  error: 150
 
 type_body_length:
   - 300 # warning
