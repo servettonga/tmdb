@@ -9,38 +9,54 @@ import SwiftUI
 import SwiftData
 
 struct MainTabView: View {
+    @State private var selectedTab = 0
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             MovieView()
                 .tabItem {
-                    Image(systemName: "film")
+                    TabItemImage(imageName: "Movies", isSelected: selectedTab == 0)
                     Text("Movies")
                 }
+                .tag(0)
 
             SeriesView()
                 .tabItem {
-                    Image(systemName: "tv")
+                    TabItemImage(imageName: "Series", isSelected: selectedTab == 1)
                     Text("Series")
                 }
+                .tag(1)
 
             SearchView()
                 .tabItem {
-                    Image(systemName: "magnifyingglass")
+                    TabItemImage(imageName: "Search", isSelected: selectedTab == 2)
                     Text("Search")
                 }
+                .tag(2)
 
             SavedView()
                 .tabItem {
-                    Image(systemName: "heart.fill")
+                    TabItemImage(imageName: "Saved", isSelected: selectedTab == 3)
                     Text("Saved")
                 }
+                .tag(3)
 
             SettingsView()
                 .tabItem {
-                    Image(systemName: "gearshape")
+                    TabItemImage(imageName: "Settings", isSelected: selectedTab == 4)
                     Text("Settings")
                 }
+                .tag(4)
         }
+    }
+}
+
+struct TabItemImage: View {
+    let imageName: String
+    let isSelected: Bool
+
+    var body: some View {
+        Image(isSelected ? "\(imageName)Selected" : imageName)
     }
 }
 

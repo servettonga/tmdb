@@ -41,6 +41,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Secrets.plist,
+				Utilities/Typography.swift,
 			);
 			target = 3A57BD8B2E48C96600966827 /* TMDBTests */;
 		};
@@ -49,6 +50,7 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				Secrets.plist,
+				Utilities/Typography.swift,
 			);
 			target = 3A57BD952E48C96600966827 /* TMDBUITests */;
 		};

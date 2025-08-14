@@ -2,8 +2,8 @@
   "colors" : [
     {
       "color" : {
-        "platform" : "universal",
-        "reference" : "systemPinkColor"
+        "platform" : "ios",
+        "reference" : "secondaryLabelColor"
       },
       "idiom" : "universal"
     },

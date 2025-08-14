@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Movies_lm.pdf",
+      "filename" : "Back_lm.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Movies_dm.pdf",
+      "filename" : "Back_dm.pdf",
       "idiom" : "universal"
     }
   ],
