@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class APIService: Sendable {
+final class APIService: @unchecked Sendable {
     // Global singleton access
     static let shared = APIService()
 
@@ -15,15 +15,16 @@ final class APIService: Sendable {
     private let bearerToken: String
     private let session: URLSession
 
-    // Default initializer with API key
-    convenience init() {
-        self.init(bearerToken: APIConfig.tmdbAPIKey)
-    }
+    private var _cachedGenres: [Int: String] = [:]
+    private var _genresLoaded = false
 
     // Injectable initializer for testing or custom configurations
-    init(bearerToken: String, session: URLSession = URLSession.shared) {
+    init(bearerToken: String = APIConfig.tmdbAPIKey, session: URLSession = URLSession.shared) {
         self.bearerToken = bearerToken
         self.session = session
+        Task {
+            await loadGenres()
+        }
     }
 
     // Error types
@@ -72,7 +73,7 @@ final class APIService: Sendable {
         do {
             let (data, response) = try await session.data(for: request)
 
-            // Check HTTP status code
+            // Check HTTP status code for errors
             if let httpResponse = response as? HTTPURLResponse {
                 if httpResponse.statusCode == 401 {
                     // Parse TMDb error response
@@ -104,12 +105,7 @@ final class APIService: Sendable {
         }
     }
 
-    // Public API methods
-    func fetchPopularMovies(page: Int = 1) async throws -> MoviesResponse {
-        let endpoint = "\(baseURL)/movie/popular?page=\(page)"
-        return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
-    }
-
+    // MARK: Movie Endpoints
     func discoverMovies(page: Int = 1, sortBy: String = "popularity.desc", genreIds: [Int] = [],
                         includeAdult: Bool = false) async throws -> MoviesResponse {
         var endpoint = "\(baseURL)/discover/movie?include_adult=\(includeAdult)&include_video=false&language=en-US&page=\(page)&sort_by=\(sortBy)"
@@ -133,6 +129,52 @@ final class APIService: Sendable {
         return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
     }
 
+    // MARK: Movie Categories
+    func fetchPopularMovies(page: Int = 1) async throws -> MoviesResponse {
+        let endpoint = "\(baseURL)/movie/popular?page=\(page)"
+        return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
+    }
+
+    func fetchNowPlayingMovies(page: Int = 1) async throws -> MoviesResponse {
+        let endpoint = "\(baseURL)/movie/now_playing?page=\(page)"
+        return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
+    }
+
+    func fetchTopRatedMovies(page: Int = 1) async throws -> MoviesResponse {
+        let endpoint = "\(baseURL)/movie/top_rated?page=\(page)"
+        return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
+    }
+
+    func fetchUpcomingMovies(page: Int = 1) async throws -> MoviesResponse {
+        let endpoint = "\(baseURL)/movie/upcoming?page=\(page)"
+        return try await performRequest(endpoint: endpoint, responseType: MoviesResponse.self)
+    }
+
+    // MARK: Genre Methods
+    private func loadGenres() async {
+        guard !_genresLoaded else { return }
+
+        do {
+            let response: GenreResponse = try await performRequest(
+                endpoint: APIConfig.genreListURL, responseType: GenreResponse.self
+            )
+            // Cache genres as [ID: Name] dictionary
+            _cachedGenres = Dictionary(uniqueKeysWithValues: response.genres.map { ($0.id, $0.name) })
+            _genresLoaded = true
+        } catch {
+            print("Failed to load genres: \(error)")
+        }
+    }
+
+    func getGenreNames(for genreIds: [Int]) -> [String] {
+        return genreIds.compactMap { _cachedGenres[$0] }
+    }
+
+    func getGenreName(for genreId: Int) -> String? {
+        return _cachedGenres[genreId]
+    }
+
+    // MARK: Utility Methods
     // Computed image URLs
     static func posterURL(path: String, size: APIConfig.ImageSize = .w500) -> URL? {
         guard !path.isEmpty else { return nil }

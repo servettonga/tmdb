@@ -7,6 +7,14 @@
 
 import Foundation
 
+// MARK: - API Response
+struct MoviesResponse: Codable {
+    let page: Int
+    let results: [Movie]
+    let totalPages: Int
+    let totalResults: Int
+}
+
 // MARK: - Main Movie Model
 struct Movie: Codable, Identifiable {
     let id: Int
@@ -58,11 +66,6 @@ struct MovieDetail: Codable, Identifiable {
 }
 
 // MARK: - Supporting models
-struct Genre: Codable, Identifiable {
-    let id: Int
-    let name: String
-}
-
 struct MovieCollection: Codable, Identifiable {
     let id: Int
     let name: String
@@ -88,16 +91,14 @@ struct SpokenLanguage: Codable {
     let englishName: String
 }
 
-// MARK: - API Response
-struct MoviesResponse: Codable {
-    let page: Int
-    let results: [Movie]
-    let totalPages: Int
-    let totalResults: Int
-}
-
 // MARK: Extensions
-extension Movie {
+extension Movie: Equatable {
+    var genreNames: String {
+        guard let genreIds = genreIds, !genreIds.isEmpty else { return "Unknown" }
+        let names = APIService.shared.getGenreNames(for: genreIds)
+        return names.isEmpty ? "Unknown" : names.joined(separator: ", ")
+    }
+
     func posterURL(using apiService: APIService = .shared, size: APIConfig.ImageSize = .w500) -> URL? {
         guard let posterPath = posterPath else { return nil }
         return APIService.posterURL(path: posterPath, size: size)
@@ -117,7 +118,7 @@ extension Movie {
     }
 
     var formattedReleaseDate: String {
-        guard let releaseDate = releaseDate else { return "" }
+        guard let releaseDate = releaseDate, !releaseDate.isEmpty else { return "TBA" }
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -130,12 +131,25 @@ extension Movie {
         return releaseDate
     }
 
+    var formattedVoteAverage: String {
+        return String(format: "%.1f", voteAverage)
+    }
+
     var ratingText: String {
         return String(format: "%.1f", voteAverage)
+    }
+
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 
 extension MovieDetail {
+    var genreNames: String {
+        guard let genres = genres, !genres.isEmpty else { return "Unknown" }
+        return genres.map { $0.name }.joined(separator: ", ")
+    }
+
     func posterURL(using apiService: APIService = .shared, size: APIConfig.ImageSize = .w500) -> URL? {
         guard let posterPath = posterPath else { return nil }
         return APIService.posterURL(path: posterPath, size: size)
@@ -168,5 +182,27 @@ extension MovieDetail {
         formatter.currencyCode = "USD"
         formatter.maximumFractionDigits = 0
         return formatter.string(from: NSNumber(value: budget))
+    }
+
+    var formattedReleaseDate: String {
+        guard let releaseDate = releaseDate, !releaseDate.isEmpty else { return "TBA" }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        if let date = formatter.date(from: releaseDate) {
+            formatter.dateStyle = .medium
+            return formatter.string(from: date)
+        }
+
+        return releaseDate
+    }
+
+    var formattedVoteAverage: String {
+        return String(format: "%.1f", voteAverage)
+    }
+
+    var formattedPopularity: String {
+        return String(format: "%.1f", popularity)
     }
 }

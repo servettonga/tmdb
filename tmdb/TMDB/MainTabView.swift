@@ -13,7 +13,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            MovieView()
+            MoviesView()
                 .tabItem {
                     TabItemImage(imageName: "Movies", isSelected: selectedTab == 0)
                     Text("Movies")
@@ -48,6 +48,7 @@ struct MainTabView: View {
                 }
                 .tag(4)
         }
+        .appBackground()
     }
 }
 

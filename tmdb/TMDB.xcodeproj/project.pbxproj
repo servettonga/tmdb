@@ -271,8 +271,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		3A0E5CDC2E4AA215009223C7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -284,15 +283,14 @@
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/swiftlint-output.txt",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		3A57BDA92E48CC4D00966827 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -306,7 +304,7 @@
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/swiftlint-output.txt",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n    swiftlint --fix\nelse\n    echo \"warning: SwiftLint not installed\"\nfi\n";
 			showEnvVarsInLog = 0;

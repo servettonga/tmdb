@@ -19,9 +19,10 @@ struct APIConfig {
         fatalError("TMDB_API_KEY not found in Secrets.plist")
     }()
 
-    // Base URL
+    // URLs
     static let baseURL: String = "https://api.themoviedb.org/3"
     static let imageBaseURL: String = "https://image.tmdb.org/t/p"
+    static let genreListURL: String = "\(baseURL)/genre/movie/list"
 
     // Image sizes
     enum ImageSize: String {
